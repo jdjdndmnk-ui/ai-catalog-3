@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI Каталог — карта ИИ-продуктов</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#14161f;--mut:#5d6378;--bd:#e3e6f0;--ac:#5b5bf0;--ac2:#e8e8ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1117;--card:#181b25;--tx:#eef0f7;--mut:#9aa1b8;--bd:#272b3a;--ac:#8c8cff;--ac2:#25274a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1117;--card:#181b25;--tx:#eef0f7;--mut:#9aa1b8;--bd:#272b3a;--ac:#8c8cff;--ac2:#25274a;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{max-width:1100px;margin:0 auto;padding:40px 20px 12px;display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+h1{margin:0 0 6px;font-size:clamp(28px,5vw,44px);letter-spacing:-.02em}
+h1 span{color:var(--ac)}
+header p{margin:0;color:var(--mut);max-width:620px}
+#theme{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;padding:8px 12px;cursor:pointer;font-size:18px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--bd)}
+.bar-in{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;flex-direction:column;gap:10px}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:8px 16px;border-radius:999px;cursor:pointer;font:inherit;font-size:14px;transition:.15s}
+.tab:hover{border-color:var(--ac)}
+.tab[aria-selected="true"]{background:var(--ac);border-color:var(--ac);color:#fff}
+#q{width:100%;padding:11px 14px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit}
+#q:focus{outline:2px solid var(--ac);outline-offset:0}
+main{max-width:1100px;margin:0 auto;padding:20px}
+.cnt{color:var(--mut);font-size:14px;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px;transition:transform .15s,border-color .15s}
+.card:hover{transform:translateY(-3px);border-color:var(--ac)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card h2{margin:0;font-size:20px}
+.badge{background:var(--ac2);color:var(--ac);font-size:12px;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.meta{font-size:13px;color:var(--mut);display:grid;grid-template-columns:auto 1fr;gap:2px 10px}
+.meta b{color:var(--tx);font-weight:600}
+.card p{margin:0;font-size:14.5px}
+.card p small{display:block;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:1px}
+.go{margin-top:auto;text-align:center;text-decoration:none;background:var(--ac);color:#fff;padding:10px;border-radius:12px;font-weight:600;font-size:14px}
+.go:hover{opacity:.9}
+.empty{text-align:center;color:var(--mut);padding:50px 0}
+footer{max-width:1100px;margin:0 auto;padding:10px 20px 40px;color:var(--mut);font-size:13px}
+[hidden]{display:none!important}.card{cursor:pointer}.card:focus-visible{outline:2px solid var(--ac)}
+.back{display:inline-block;margin-bottom:16px;color:var(--ac);text-decoration:none;font-weight:600}
+.dh{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+#detail h1{font-size:clamp(28px,5vw,40px);margin:0}
+#detail .meta{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;font-size:14px;margin-bottom:14px}
+.sec{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px 18px;margin-bottom:12px}
+.sec h3,#detail>h3{margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+.sec p{margin:0}
+.rel{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px}
+.rel a{background:var(--ac2);color:var(--ac);padding:6px 14px;border-radius:999px;text-decoration:none;font-size:14px}
+#detail .go{display:block;max-width:360px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:8px}.fact{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px}.fact small{display:block;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}.fact b{font-size:15px;font-weight:600}.note{color:var(--mut);font-size:12px;margin:0 0 14px}
+.home{color:inherit;text-decoration:none;cursor:pointer;transition:opacity .15s}.home:hover{opacity:.75}
+.art{margin:-18px -18px 4px;height:130px;overflow:hidden;border-radius:18px 18px 0 0}.art svg,.hero svg{display:block;width:100%;height:100%}.card:hover .art svg{transform:scale(1.06)}.hero{aspect-ratio:5/2;max-height:240px;border-radius:20px;overflow:hidden;margin-bottom:16px}
+.blobs{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}.blobs i{position:absolute;width:440px;height:440px;border-radius:50%;filter:blur(90px);opacity:.28;animation:fl 18s ease-in-out infinite alternate}.blobs i:nth-child(1){background:#6c63ff;top:-140px;left:-90px}.blobs i:nth-child(2){background:#ff5fa2;right:-120px;top:32%;animation-delay:-6s}.blobs i:nth-child(3){background:#22d3c5;bottom:-160px;left:32%;animation-delay:-12s}
+@keyframes fl{to{transform:translate(70px,90px) scale(1.2)}}
+h1 span{background:linear-gradient(90deg,var(--ac),#ff5fa2,#22d3c5,var(--ac));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 6s linear infinite}
+@keyframes sh{to{background-position:300% 0}}
+.bar{background:color-mix(in srgb,var(--bg) 78%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.card{animation:up .5s backwards}@keyframes up{from{opacity:0;transform:translateY(16px)}}
+.stats-wrap{max-width:1100px;margin:0 auto;padding:8px 20px 14px}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.st{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px 16px}
+.st b{display:block;font-size:32px;line-height:1.1;color:var(--ac)}.st span{color:var(--mut);font-size:13px}
+.marq{overflow:hidden;margin-top:14px;padding:10px 0;border-block:1px solid var(--bd);-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.mq{display:flex;width:max-content;animation:mq 45s linear infinite}.mq span{white-space:nowrap;padding-right:30px;color:var(--mut);font-weight:600}
+@keyframes mq{to{transform:translateX(-50%)}}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px dashed var(--bd);background:transparent;color:var(--tx);padding:6px 14px;border-radius:999px;cursor:pointer;font:inherit;font-size:13px;transition:.15s}
+.chip:hover{border-color:var(--ac)}.chip.on{background:var(--ac2);border:1px solid var(--ac);color:var(--ac)}
+#rnd{border:0;background:linear-gradient(90deg,var(--ac),#ff5fa2);color:#fff;font-weight:600}#rnd:hover{filter:brightness(1.1);transform:rotate(-1.5deg) scale(1.04)}
+.tags{display:flex;gap:6px;flex-wrap:wrap}.tags span{font-size:12px;background:var(--bg);border:1px solid var(--bd);padding:2px 9px;border-radius:999px;color:var(--mut)}.tags .g{color:#12a150;border-color:currentColor}.tags .o{color:#7c5cff;border-color:currentColor}
+@media (prefers-reduced-motion:reduce){*,*::before{animation:none!important}}
+.cmp h2{margin:0 0 12px;font-size:22px}.cmp-pick{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.cmp-pick select{flex:1 1 180px;min-width:0;padding:11px 12px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit}
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-bottom:14px}
+.vcard{background:var(--card);border:1px solid var(--bd);border-radius:18px;overflow:hidden;text-align:center;padding-bottom:12px}
+.vart{height:110px;overflow:hidden;margin-bottom:10px}.vart svg{display:block;width:100%;height:100%}
+.vcard b{display:block;font-size:18px}.vcard span{color:var(--mut);font-size:13px}
+.vsb{font-weight:800;font-size:22px;color:var(--ac);letter-spacing:.05em}
+.verdict{background:var(--ac2);border:1px solid var(--ac);border-radius:14px;padding:12px 16px;margin:0 0 14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.adv{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px 18px}.adv h3{margin:0 0 8px;font-size:15px}.adv ul{margin:0;padding-left:18px}.adv li{margin-bottom:6px;font-size:14.5px}.adv p{margin:0 0 10px;font-size:14.5px}
+.tw{overflow-x:auto;margin-bottom:14px}.ct{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--bd);font-size:14px}.ct th,.ct td{padding:10px 12px;border-bottom:1px solid var(--bd);text-align:left;vertical-align:top}.ct td.win{background:color-mix(in srgb,#12a150 16%,transparent);font-weight:600}.ct th{color:var(--mut);font-weight:600}
+.go.alt{background:var(--ac2);color:var(--ac);margin-top:10px}
+@media (max-width:640px){.vs{grid-template-columns:1fr}.vsb{text-align:center}.two{grid-template-columns:1fr}}
+.blobs i{filter:none;width:560px;height:560px;opacity:.3;will-change:transform}
+.blobs i:nth-child(1){background:radial-gradient(circle,#6c63ff,transparent 68%)}.blobs i:nth-child(2){background:radial-gradient(circle,#ff5fa2,transparent 68%)}.blobs i:nth-child(3){background:radial-gradient(circle,#22d3c5,transparent 68%)}
+.mq{will-change:transform}.mq:hover{animation-play-state:paused}
+.card{content-visibility:auto;contain-intrinsic-size:auto 430px}.noanim .card{animation:none}
+.card.sel{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac)}
+.kbhint{display:none}.kbhint kbd{border:1px solid var(--bd);border-radius:5px;padding:0 5px;background:var(--card);font:inherit;font-size:11px}
+@keyframes sl{from{transform:translateX(30px);opacity:0}}
+html.pc body{transition:padding-right .25s}
+html.pc body.pd{padding-right:min(580px,44vw)}
+html.pc #detail{position:fixed;top:0;right:0;bottom:0;width:min(580px,44vw);max-width:none;margin:0;overflow-y:auto;overscroll-behavior:contain;background:var(--bg);border-left:1px solid var(--bd);box-shadow:-12px 0 40px rgba(0,0,0,.12);z-index:30;padding:calc(20px + env(safe-area-inset-top,0px)) 24px 40px;animation:sl .25s}
+html.pc .back{padding:6px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--card)}
+html.pc header,html.pc .stats-wrap,html.pc main#list,html.pc footer{max-width:1400px}
+html.pc .bar-in{max-width:1400px;display:grid;grid-template-columns:1fr auto;gap:10px 16px;align-items:center}
+html.pc .tabs{grid-column:1;grid-row:1;flex-wrap:wrap;overflow:visible}
+html.pc .chips{grid-column:1;grid-row:2}
+html.pc #q{grid-column:2;grid-row:1;width:300px}
+html.pc .kbhint{display:block;grid-column:2;grid-row:2;color:var(--mut);font-size:12px;text-align:right}
+html.pc .grid{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+
+#mode{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;padding:8px 12px;cursor:pointer;font:inherit;font-size:14px;white-space:nowrap}#mode:hover{border-color:var(--ac)}
+.hbtns{display:flex;gap:8px;align-items:flex-start}
+@media (max-width:520px){#mode .lbl{display:none}}
+html.phone{background:color-mix(in srgb,var(--bg) 90%,#000)}html.phone body{max-width:460px;margin:0 auto;background:var(--bg);border-inline:1px solid var(--bd);min-height:100vh}
+
+</style>
+</head>
+<body>
+<div class="blobs"><i></i><i></i><i></i></div>
+<header>
+<div>
+<h1><a class="home" href="#home" title="На главную">AI <span>Каталог</span></a></h1>
+<p>Подборка ИИ-продуктов: зачем созданы, когда, кем и где открыть. Выбирайте вкладку по задаче или ищите по названию.</p>
+</div>
+<div class="hbtns"><button id="mode" aria-label="Переключить версию сайта"></button><button id="theme" aria-label="Сменить тему" title="Сменить тему">🌓</button></div>
+</header>
+<div class="stats-wrap" id="stats"></div>
+<div class="bar"><div class="bar-in">
+<div class="tabs" role="tablist" id="tabs"></div>
+<div class="chips"><button class="chip" data-f="free">🆓 Бесплатные</button><button class="chip" data-f="open">🔓 Открытые веса</button><button class="chip" id="rnd">🎲 Случайный ИИ</button></div>
+<input id="q" type="search" placeholder="Поиск: название, автор, задача…">
+<div class="kbhint"><kbd>/</kbd> поиск · <kbd>1</kbd>–<kbd>8</kbd> вкладки · <kbd>←</kbd><kbd>→</kbd> листать · <kbd>R</kbd> случайный · <kbd>C</kbd> сравнить · <kbd>T</kbd> тема · <kbd>Esc</kbd> закрыть</div>
+</div></div>
+<main id="list">
+<p class="cnt" id="cnt"></p>
+<div class="grid" id="grid"></div>
+</main>
+<main id="detail" hidden></main>
+<footer>Даты и авторы указаны по общедоступным данным; ссылки ведут на официальные сайты. Сервисы меняются — актуальные условия и доступность смотрите на самих сайтах.</footer>
+<script>
+var CATS=["Все","Чат-боты","Изображения","Видео","Код","Аудио и голос","Платформы"];
+var D=[
+{n:"ChatGPT",c:"Чат-боты",o:"OpenAI",y:"2022 (30 нояб.)",a:"Сэм Олтман, Грег Брокман, Илья Суцкевер и др.",p:"Универсальный ассистент: тексты, анализ, код, голос, файлы, изображения.",w:"Показать, что большие языковые модели можно сделать понятными в обычном диалоге.",u:"https://chatgpt.com",t:"Запущен как исследовательский предпросмотр на моделях семейства GPT-3.5 и быстро стал одним из самых быстрорастущих сервисов в истории. Позже получил GPT-4 и новее, голосовой режим, работу с файлами и изображениями, плагины и агентов.",m:"OpenAI основана в 2015 году как некоммерческая лаборатория. Среди основателей Сэм Олтман, Грег Брокман, Илья Суцкевер, Войцех Заремба и Илон Маск."},
+{n:"Claude",c:"Чат-боты",o:"Anthropic",y:"2023 (март)",a:"Дарио и Даниэла Амодеи и команда Anthropic",p:"Ассистент для письма, анализа длинных документов, программирования и работы с файлами.",w:"Сделать безопасный и управляемый ИИ — компания строится вокруг исследований безопасности.",u:"https://claude.ai",t:"Семейство моделей Anthropic с упором на длинный контекст, аккуратное письмо, анализ документов и программирование. Обучается с акцентом на безопасность (подход Constitutional AI).",m:"Anthropic основана в 2021 году бывшими сотрудниками OpenAI, среди них брат и сестра Дарио (CEO) и Даниэла (президент) Амодеи. Компания зарегистрирована как public benefit corporation."},
+{n:"Gemini",c:"Чат-боты",o:"Google DeepMind",y:"2023 (дек.)",a:"Google DeepMind и Google Research",p:"Мультимодальный ассистент (текст, изображения, аудио, видео), встроен в сервисы Google.",w:"Объединить усилия Google Brain и DeepMind в одну флагманскую модель; до этого был Bard.",u:"https://gemini.google.com",t:"Изначально задумана мультимодальной: работает с текстом, изображениями, аудио, видео и кодом. Встроена в Поиск, Gmail, Docs и Android. Заменила чат-бот Bard.",m:"Развивается Google DeepMind — подразделением, образованным в 2023 году из слияния DeepMind (основатели Демис Хассабис, Шейн Легг, Мустафа Сулейман) и Google Brain. Хассабис возглавляет Google DeepMind."},
+{n:"Microsoft Copilot",c:"Чат-боты",o:"Microsoft",y:"2023",a:"Microsoft AI (на моделях OpenAI и собственных)",p:"Помощник в Windows, Edge, Office: поиск, письмо, сводки, изображения.",w:"Встроить ИИ в повседневные продукты; вырос из Bing Chat (февр. 2023).",u:"https://copilot.microsoft.com",t:"Помощник встроен в Windows, браузер Edge, приложения Microsoft 365 и мобильные приложения. Умеет искать, писать, подводить итоги и создавать изображения.",m:"Развивается подразделением Microsoft AI, которое с 2024 года возглавляет Мустафа Сулейман, сооснователь DeepMind. Использует модели партнёра — OpenAI, а также собственные."},
+{n:"Grok",c:"Чат-боты",o:"xAI",y:"2023 (нояб.)",a:"Илон Маск и команда xAI",p:"Чат-бот с доступом к актуальным данным соцсети X.",w:"Альтернативный ИИ с более «свободным» стилем и привязкой к реальному времени.",u:"https://grok.com",t:"Отличается доступом к публикациям X в реальном времени и более раскованным тоном. Доступен в X и отдельном приложении, умеет рассуждать и генерировать изображения.",m:"xAI основана Илоном Маском в 2023 году. В команде собраны инженеры и исследователи из ведущих ИИ-лабораторий и технологических компаний."},
+{n:"DeepSeek",c:"Чат-боты",o:"DeepSeek",y:"2025 (янв., чат-приложение)",a:"Лян Вэньфэн и команда DeepSeek",p:"Чат и модели рассуждения, часть моделей с открытыми весами.",w:"Показать сильные модели при меньших затратах на обучение.",u:"https://chat.deepseek.com",t:"Известность принесли модели V3 и рассуждающая R1: высокое качество при заявленно низкой стоимости обучения. Веса ряда моделей открыты, их можно запускать локально.",m:"Компания основана в 2023 году в Китае Лян Вэньфэном, который также основал хедж-фонд High-Flyer, финансирующий исследования."},
+{n:"Le Chat",c:"Чат-боты",o:"Mistral AI",y:"2024 (февр.)",a:"Артур Менш, Гийом Лампль, Тимоте Лакруа",p:"Европейский ассистент с поиском, кодом и генерацией изображений.",w:"Дать европейскую альтернативу и развивать открытые модели.",u:"https://chat.mistral.ai",t:"Ассистент с веб-поиском, интерпретатором кода, анализом документов и генерацией изображений. Работает на моделях Mistral, часть которых имеет открытые веса.",m:"Mistral AI основана в Париже в 2023 году выходцами из DeepMind и Meta: Артуром Меншем, Гийомом Лампле и Тимоте Лакруа."},
+{n:"Perplexity",c:"Платформы",o:"Perplexity AI",y:"2022",a:"Аравинд Сринивас, Денис Ярац, Джонни Хо, Энди Конвинский",p:"ИИ-поисковик: отвечает с источниками и ссылками.",w:"Заменить список ссылок поисковика готовым проверяемым ответом.",u:"https://www.perplexity.ai",t:"Каждый ответ строится на найденных в сети источниках, к которым даны ссылки. Есть режимы глубокого исследования и поиска по отдельным темам.",m:"Основана в 2022 году в Сан-Франциско. CEO Аравинд Сринивас ранее занимался ИИ-исследованиями, в том числе в OpenAI."},
+{n:"NotebookLM",c:"Платформы",o:"Google",y:"2023 (июль)",a:"Google Labs",p:"Загружаете свои документы и ролики — получаете конспекты, вопросы, аудиообзор.",w:"Работа с ИИ только на ваших материалах, а не на «всём интернете».",u:"https://notebooklm.google",t:"Отвечает строго по загруженным источникам: PDF, сайтам, видео. Делает конспекты, FAQ и аудиообзор в формате диалога двух ведущих.",m:"Создан командой Google Labs. Проект начинался как Project Tailwind, к нему присоединился писатель Стивен Джонсон."},
+{n:"Hugging Face",c:"Платформы",o:"Hugging Face",y:"2016",a:"Клеман Деланг, Жюльен Шомон, Томас Вольф",p:"Хаб открытых моделей, датасетов и демо-приложений для разработчиков.",w:"Сделать ИИ открытым и доступным сообществу; начинали с чат-бота для подростков.",u:"https://huggingface.co",t:"Огромная коллекция моделей и датасетов, пространства Spaces для демо-приложений и библиотека Transformers, ставшая стандартом в отрасли.",m:"Основана в 2016 году Клеманом Деланг, Жюльеном Шомоном и Томасом Вольфом. Начинали с чат-бота для подростков, затем сделали платформу для сообщества."},
+{n:"Midjourney",c:"Изображения",o:"Midjourney",y:"2022 (июль, открытая бета)",a:"Дэвид Хольц",p:"Генерация художественных изображений по текстовому описанию.",w:"Дать инструмент для визуального творчества и исследований воображения.",u:"https://www.midjourney.com",t:"Работает через Discord и веб-сайт, известна узнаваемой эстетикой. Регулярно выпускает новые версии модели с лучшим реализмом и следованием описанию.",m:"Небольшая независимая лаборатория. Основатель Дэвид Хольц ранее сооснователь компании Leap Motion."},
+{n:"Stable Diffusion",c:"Изображения",o:"Stability AI",y:"2022 (авг.)",a:"Stability AI, CompVis (LMU Мюнхен), Runway",p:"Открытая модель генерации изображений, запускается и локально.",w:"Открытый доступ к генеративным моделям для всех.",u:"https://stability.ai",t:"Открытые веса позволяют запускать модель на своём компьютере, дообучать и встраивать в свои продукты. Вокруг неё выросла большая экосистема инструментов.",m:"Разработана Stability AI (основатель Эмад Мостак) совместно с исследователями CompVis из Мюнхенского университета и компанией Runway. В основе работа по латентной диффузии."},
+{n:"Sora",c:"Видео",o:"OpenAI",y:"2024 (анонс февр., доступ дек.)",a:"Команда OpenAI",p:"Создание видео по тексту и изображению.",w:"Научить ИИ моделировать физический мир в движении.",u:"https://sora.com",t:"Создаёт ролики по тексту, изображению или видео, умеет продлевать и монтировать. Для доступа нужен аккаунт; страны и условия меняются.",m:"Разработана командой OpenAI. Среди ведущих исследователей проекта Тим Брукс и Билл Пиблс."},
+{n:"Runway",c:"Видео",o:"Runway",y:"2018 (основана)",a:"Кристобаль Валенсуэла, Алехандро Матамала, Анастасис Германидис",p:"Генерация и монтаж видео с ИИ для творческих команд.",w:"Дать кино- и дизайн-индустрии инструменты на основе ИИ.",u:"https://runwayml.com",t:"Платформа для генерации видео (серия моделей Gen), удаления фона, анимации и монтажа. Используется в кино, рекламе и дизайне.",m:"Основана выпускниками Нью-Йоркского университета: Кристобалем Валенсуэлой, Алехандро Матамалой и Анастасисом Германидисом. Участвовала в создании исходной модели Stable Diffusion."},
+{n:"GitHub Copilot",c:"Код",o:"GitHub + OpenAI",y:"2021 (превью), 2022 (релиз)",a:"GitHub, OpenAI",p:"Подсказки кода в редакторе, чат и агентные задачи.",w:"Ускорить рутину разработчика и снизить порог входа в код.",u:"https://github.com/features/copilot",t:"Дописывает строки и функции, объясняет код, исправляет ошибки, умеет работать в режиме агента. Встраивается в VS Code, JetBrains и другие редакторы.",m:"Создан GitHub (принадлежит Microsoft) на основе моделей OpenAI Codex. Один из первых массовых ИИ-помощников для программистов."},
+{n:"Cursor",c:"Код",o:"Anysphere",y:"2023",a:"Майкл Труэлл, Суалех Асиф, Арвид Лунмарк, Аман Сэнгер",p:"Редактор кода со встроенным ИИ-агентом, понимающий весь проект.",w:"Переосмыслить редактор вокруг ИИ, а не добавлять ИИ как плагин.",u:"https://cursor.com",t:"Редактор на основе VS Code: чат, правки сразу в нескольких файлах и агент, выполняющий задачи в проекте. Индексирует код, чтобы отвечать с учётом контекста.",m:"Разработан компанией Anysphere, основанной выпускниками MIT: Майклом Труэллом, Суалехом Асифом, Арвидом Лунмарком и Аманом Сэнгером."},
+{n:"Suno",c:"Аудио и голос",o:"Suno",y:"2023",a:"Микки Шульман, Георг Куцко, Мартин Камачо, Кинан Фрейберг",p:"Генерация песен с вокалом по текстовому описанию.",w:"Позволить создавать музыку без навыков и студии.",u:"https://suno.com",t:"Из короткого описания и, при желании, текста создаёт песню с вокалом и аранжировкой. Есть бесплатный тариф с ограничениями; права на треки зависят от плана.",m:"Основана в Кембридже (США) бывшими сотрудниками компании Kensho: Микки Шульманом, Георгом Куцко, Мартином Камачо и Кинаном Фрейбергом."},
+{n:"ElevenLabs",c:"Аудио и голос",o:"ElevenLabs",y:"2022 (основана), 2023 (бета)",a:"Матеуш Станишевский, Петр Домбковский",p:"Реалистичная озвучка, клонирование голоса, дубляж на разные языки.",w:"Сделать озвучку естественной и доступной на многих языках.",u:"https://elevenlabs.io",t:"Синтез речи с эмоциями, клонирование голоса, дубляж видео с сохранением голоса, звуковые эффекты и голосовые агенты.",m:"Основана поляками Матеушем Станишевским (бывший инженер Palantir) и Петром Домбковским (бывший инженер Google)."},
+{n:"Whisper",c:"Аудио и голос",o:"OpenAI",y:"2022 (сент.)",a:"Команда OpenAI",p:"Открытая модель распознавания речи и субтитров на многих языках.",w:"Надёжное распознавание речи в шумных условиях и с акцентами.",u:"https://github.com/openai/whisper",t:"Транскрибирует и переводит речь на десятках языков, в том числе на русском. Обучена на 680 тысячах часов аудио; код и веса опубликованы под открытой лицензией.",m:"Разработана командой OpenAI. В числе авторов Алек Рэдфорд и Джонг Ук Ким."},
+{n:'Qwen',c:'Чат-боты',o:'Alibaba Cloud',y:'2023',a:'Команда Qwen, Alibaba Cloud',p:'Чат-бот и семейство моделей для текста, кода, изображений и рассуждений.',w:'Дать открытые сильные модели и облачные сервисы на их основе.',u:'https://chat.qwen.ai',t:'Развивается как чат и как линейка моделей разных размеров: многие из них опубликованы с открытыми весами, их удобно запускать локально и дообучать.',m:'Alibaba основана в 1999 году Джеком Ма. Облачное подразделение Alibaba Cloud (с 2009 года) развивает Qwen.'},
+{n:'GigaChat',c:'Чат-боты',o:'Сбер',y:'2023 (апрель)',a:'Сбер, команды SberDevices и Sber AI',p:'Русскоязычный ассистент: тексты, код, ответы на вопросы, создание картинок.',w:'Создать собственную российскую языковую модель, сильную в русском языке.',u:'https://giga.chat',t:'Обучен с упором на русский язык, умеет рисовать изображения через модель Kandinsky, работает как чат и через API для бизнеса.',m:'Разрабатывается подразделениями Сбера, включая SberDevices. Сбер возглавляет Герман Греф.'},
+{n:'Алиса',c:'Чат-боты',o:'Яндекс',y:'2017 (помощник), 2023 (YandexGPT)',a:'Яндекс',p:'Голосовой и текстовый помощник в колонках, телефоне и браузере.',w:'Сделать удобного русскоязычного помощника для повседневных задач и умного дома.',u:'https://alice.yandex.ru',t:'Появилась как голосовой помощник в 2017 году, а с 2023 года использует нейросеть YandexGPT для диалога, текстов и ответов на сложные вопросы.',m:'Яндекс основан Аркадием Воложем и Ильёй Сегаловичем. Алису создала команда Яндекса.'},
+{n:'Llama',c:'Платформы',o:'Meta',y:'2023 (февр.)',a:'Meta AI (исследовательская группа FAIR)',p:'Семейство моделей с открытыми весами для чат-ботов, исследований и локальных запусков.',w:'Дать сообществу сильные модели и ускорить открытые исследования.',u:'https://www.llama.com',t:'Стала основой для сотен производных моделей. Веса доступны по лицензии Llama, которая отличается от классической открытой лицензии.',m:'Разработана Meta. Исследовательская лаборатория FAIR основана в 2013 году при участии Яна Лекуна.'},
+{n:'Adobe Firefly',c:'Изображения',o:'Adobe',y:'2023 (март)',a:'Команда Adobe',p:'Генерация и редактирование изображений, генеративная заливка в Photoshop.',w:'Дать дизайнерам ИИ-инструменты, обученные, по заявлению Adobe, на лицензируемых данных.',u:'https://firefly.adobe.com',t:'Встроена в Photoshop, Illustrator и Express: можно дорисовать фон, убрать лишнее, сменить стиль, создать текстовые эффекты.',m:'Adobe основана в 1982 году Джоном Уорноком и Чаком Гешке.'},
+{n:'Kling AI',c:'Видео',o:'Kuaishou',y:'2024 (июнь)',a:'Команда Kuaishou',p:'Генерация видео по тексту и изображению.',w:'Занять место в быстро растущем рынке ИИ-видео.',u:'https://klingai.com',t:'Создаёт ролики с реалистичным движением, умеет оживлять фото и продлевать сцены. Сервис быстро набрал аудиторию после запуска.',m:'Kuaishou (Kwai) основана в 2011 году Су Хуа и Чэн Исяо, компания известна короткими видео.'},
+{n:'Ollama',c:'Платформы',o:'Ollama',y:'2023',a:'Джеффри Морган, Майкл Чанг',p:'Запуск языковых моделей локально на своём компьютере.',w:'Сделать локальные модели такими же простыми, как установка обычного приложения.',u:'https://ollama.com',t:'Одной командой скачивает и запускает открытые модели (Llama, Qwen, Gemma и др.). Работает без интернета, данные остаются на вашем устройстве.',m:'Основана Джеффри Морганом и Майклом Чангом, ранее создавшими Kitematic для Docker.'},
+{n:'Gamma',c:'Платформы',o:'Gamma',y:'2020 (основана), ИИ с 2023',a:'Грант Ли, Джон Нороньха, Джеймс Фокс',p:'Создание презентаций, документов и мини-сайтов с помощью ИИ.',w:'Освободить от рутины в PowerPoint: из короткого описания получить готовый дизайн.',u:'https://gamma.app',t:'Из темы или заметок собирает слайды с текстом, структурой и оформлением. Результат можно править и экспортировать в PDF или PowerPoint.',m:'Основана в Сан-Франциско командой из трёх сооснователей: Гранта Ли, Джона Нороньхи и Джеймса Фокса.'},
+{n:'Ideogram',c:'Изображения',o:'Ideogram',y:'2023 (август)',a:'Мохаммад Норузи, Уильям Чан, Читван Сахария, Джонатан Хо',p:'Генерация изображений с аккуратным текстом: постеры, логотипы, открытки.',w:'Решить главную слабость ранних генераторов — кривые надписи на картинках.',u:'https://ideogram.ai',t:'Известен тем, что хорошо рисует читаемый текст на изображениях. Есть уровень с бесплатными лимитами, галерея работ сообщества и редактирование картинок.',m:'Основан бывшими исследователями Google Brain, которые работали над диффузионными моделями изображений.'},
+{n:'Luma Dream Machine',c:'Видео',o:'Luma AI',y:'2024 (июнь)',a:'Амит Джейн, Алекс Ю',p:'Генерация видео по тексту и фото с плавным движением камеры.',w:'Сделать создание видео доступным без съёмок и сложного монтажа.',u:'https://lumalabs.ai/dream-machine',t:'Быстро делает короткие клипы из описания или картинки, умеет задавать начальный и конечный кадр. Компания раньше была известна 3D-сканированием на телефоне.',m:'Luma AI основана в 2021 году Амитом Джейном и Алексом Ю.'},
+{n:'Replit',c:'Код',o:'Replit',y:'2016 (основана), агент — 2024',a:'Амджад Масад, Фарис Масад, Хайя Одех',p:'Среда программирования в браузере: код, запуск и публикация в одном месте, плюс ИИ-агент.',w:'Убрать барьеры: программировать можно сразу, без установки и настройки.',u:'https://replit.com',t:'Онлайн-среда с готовым запуском и хостингом. ИИ-агент собирает приложения по текстовому описанию и исправляет ошибки.',m:'Основана Амджадом Масадом, Фарисом Масадом и Хайей Одех с целью сделать программирование доступным.'},
+{n:'Lovable',c:'Код',o:'Lovable',y:'2024 (запуск)',a:'Антон Осика, Фабиан Хедин',p:'Создаёт веб-приложения и сайты по описанию в обычном чате.',w:'Дать людям без опыта программирования возможность делать работающие приложения.',u:'https://lovable.dev',t:'Вы описываете идею, а сервис генерирует интерфейс и код, который можно править в чате и опубликовать. Вырос из проекта GPT Engineer.',m:'Основана в Стокгольме Антоном Осикой и Фабианом Хедином.'},
+{n:'Descript',c:'Аудио и голос',o:'Descript',y:'2017',a:'Эндрю Мейсон и команда Descript',p:'Монтаж аудио и видео через текст: удаляете слово в расшифровке — оно пропадает из записи.',w:'Сделать монтаж подкастов и видео таким же простым, как правка текста.',u:'https://www.descript.com',t:'Автоматически расшифровывает запись, убирает слова-паразиты и паузы, делает субтитры и умеет озвучивать текст синтезированным голосом.',m:'Основана Эндрю Мейсоном, ранее основавшим сервис Groupon.'}
+];
+var cat="Все",tabs=document.getElementById("tabs"),grid=document.getElementById("grid"),q=document.getElementById("q"),cnt=document.getElementById("cnt");
+function esc(s){return s.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function drawTabs(){tabs.innerHTML=CATS.map(function(c){return '<button class="tab" role="tab" aria-selected="'+(c===cat)+'" data-c="'+c+'">'+c+'</button>'}).join("")+'<button class="tab" role="tab" aria-selected="'+(cat==="cmp")+'" data-c="cmp">⚖️ Сравнение</button>'}
+function render(){var cm=cat==='cmp';q.hidden=cm;document.querySelector('.chips').hidden=cm;if(cm){cnt.textContent='';grid.innerHTML=cmpView();return}
+var s=q.value.trim().toLowerCase();
+var r=D.filter(function(d){return(cat==="Все"||d.c===cat)&&(!fl.free||isFree(d))&&(!fl.open||isOpen(d))&&(!s||(d.n+d.o+d.a+d.p+d.w+d.c).toLowerCase().indexOf(s)>-1)});
+cnt.textContent="Найдено: "+r.length;view=r.map(function(d){return D.indexOf(d)});grid.classList.toggle('noanim',!an);
+grid.innerHTML=r.length?r.map(function(d){return '<article class="card'+(D.indexOf(d)===curI?' sel':'')+'" style="animation-delay:'+(r.indexOf(d)%12*40)+'ms" tabindex="0" data-i="'+D.indexOf(d)+'"><div class="art">'+art(d,'c'+D.indexOf(d))+'</div><div class="top"><h2>'+esc(d.n)+'</h2><span class="badge">'+esc(d.c)+'</span></div>'+tags(d)+
+'<div class="meta"><b>Компания</b><span>'+esc(d.o)+'</span><b>Год</b><span>'+esc(d.y)+'</span><b>Авторы</b><span>'+esc(d.a)+'</span></div>'+
+'<p>'+esc(d.p)+'</p>'+
+'<a class="go" href="'+d.u+'" target="_blank" rel="noopener noreferrer">Открыть сайт ↗</a></article>'}).join(""):'<div class="empty" style="grid-column:1/-1">Ничего не найдено</div>';
+}
+tabs.addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;cat=b.dataset.c;an=true;drawTabs();render()});
+var qt;q.addEventListener("input",function(){clearTimeout(qt);qt=setTimeout(function(){an=false;render()},120)});
+document.getElementById("theme").addEventListener("click",function(){var r=document.documentElement,d=r.getAttribute("data-theme")==="dark"||(!r.getAttribute("data-theme")&&matchMedia("(prefers-color-scheme:dark)").matches);r.setAttribute("data-theme",d?"light":"dark")});
+var X={
+'ChatGPT':{f:'Бесплатный тариф с лимитами, расширенные модели по подписке',o:'Закрытая модель',p:'Веб, iOS, Android, десктоп, API',r:'Да, хорошо',s:'Универсальность: текст, код, анализ данных, голос, изображения, много интеграций.',l:'Бывают неточные ответы; лучшие модели и лимиты только на платных тарифах.',k:'Для учёбы, работы и повседневных задач; хороший первый выбор новичку.'},
+'Claude':{f:'Бесплатный тариф с лимитами, больше возможностей по подписке',o:'Закрытая модель',p:'Веб, iOS, Android, десктоп, API',r:'Да, хорошо',s:'Длинные документы, аккуратные тексты, программирование, работа с файлами.',l:'Строгие лимиты на бесплатном тарифе; генерации изображений нет.',k:'Для писателей, студентов, аналитиков и разработчиков.'},
+'Gemini':{f:'Бесплатный доступ, расширенные модели по подписке Google',o:'Закрытая (у Google отдельно есть открытые модели Gemma)',p:'Веб, Android, iOS, API',r:'Да, хорошо',s:'Интеграция с Gmail, Docs, Поиском, Android; работа с видео, фото и аудио.',l:'Лучше раскрывается внутри экосистемы Google.',k:'Для тех, кто живёт в сервисах Google и Android.'},
+'Microsoft Copilot':{f:'Бесплатный доступ с лимитами, расширенный по подпискам',o:'Закрытая модель',p:'Веб, Windows, Edge, iOS, Android',r:'Да',s:'Встроен в Windows и Office, быстрый доступ без отдельных установок.',l:'Возможности зависят от версии, региона и подписки.',k:'Для пользователей Windows и Microsoft 365.'},
+'Grok':{f:'Бесплатный доступ с лимитами, подписки для расширенного',o:'В основном закрытая (веса ранних версий публиковались)',p:'Веб, X, iOS, Android, API',r:'Частично',s:'Свежие данные из X, быстрые ответы на новостные темы.',l:'Привязка к X; качество зависит от версии и тарифа.',k:'Для тех, кто следит за новостями и трендами в X.'},
+'DeepSeek':{f:'Чат бесплатный, API платный и недорогой',o:'Открытые веса у ряда моделей',p:'Веб, iOS, Android, API, локальный запуск',r:'Да',s:'Сильные рассуждения, математика и код, можно запускать у себя.',l:'Вопросы к приватности данных; на чувствительные темы есть ограничения.',k:'Для разработчиков, учёбы и экспериментов с локальными моделями.'},
+'Le Chat':{f:'Бесплатный тариф, расширенный Pro',o:'Часть моделей открытая, часть закрытая',p:'Веб, iOS, Android, API',r:'Да',s:'Быстрые ответы, европейская юрисдикция, поиск и анализ документов.',l:'Экосистема меньше, чем у крупнейших конкурентов.',k:'Для тех, кому важны европейские сервисы и открытые модели.'},
+'Perplexity':{f:'Бесплатный тариф, расширенный Pro',o:'Закрытый сервис (использует разные модели)',p:'Веб, iOS, Android, API',r:'Да',s:'Ответы с источниками, удобно проверять факты и искать информацию.',l:'Не для творчества и длинных текстов; качество зависит от найденных источников.',k:'Для исследований, учёбы и быстрого поиска.'},
+'NotebookLM':{f:'Бесплатно, платные тарифы расширяют лимиты',o:'Закрытый сервис',p:'Веб, iOS, Android',r:'Да, много языков',s:'Работает только по вашим материалам, делает конспекты и аудиообзоры.',l:'Ограничения на число и размер источников; отвечает лишь по загруженному.',k:'Для студентов: конспекты лекций, подготовка к экзаменам.'},
+'Hugging Face':{f:'Бесплатно для основных функций, платные тарифы для мощностей',o:'Открытая платформа, большинство моделей с открытыми весами',p:'Веб, библиотеки Python, API',r:'Зависит от модели',s:'Огромный выбор моделей и датасетов, сообщество, готовые демо.',l:'Нужна техническая подготовка; у моделей разные лицензии.',k:'Для разработчиков и инженеров, изучающих ИИ.'},
+'Midjourney':{f:'Только платные подписки',o:'Закрытая модель',p:'Веб, Discord',r:'Лучше писать на английском',s:'Выразительные, художественные изображения, сильный стиль.',l:'Нет постоянного бесплатного тарифа; сложнее точно контролировать детали.',k:'Для дизайнеров, иллюстраторов и творческих проектов.'},
+'Stable Diffusion':{f:'Бесплатно при локальном запуске, облачные API платные',o:'Открытые веса (лицензия зависит от версии)',p:'Локально на ПК, веб-интерфейсы, API',r:'Лучше писать на английском',s:'Полный контроль, дообучение, работа без интернета и без подписки.',l:'Нужен мощный компьютер с видеокартой и время на настройку.',k:'Для энтузиастов и разработчиков, которым нужна гибкость.'},
+'Sora':{f:'Доступ через подписки OpenAI, зависит от региона',o:'Закрытая модель',p:'Веб, мобильное приложение',r:'Лучше писать на английском',s:'Видео по тексту и изображению, реалистичное движение.',l:'Ограниченная длительность роликов и доступность по странам.',k:'Для создателей видео, рекламы и визуальных экспериментов.'},
+'Runway':{f:'Ограниченные бесплатные кредиты, остальное по подписке',o:'Закрытая модель',p:'Веб, iOS',r:'Лучше писать на английском',s:'Набор инструментов для видео: генерация, монтаж, удаление фона.',l:'Кредиты расходуются быстро; лучший результат на платных тарифах.',k:'Для видеомонтажёров, режиссёров и рекламных команд.'},
+'GitHub Copilot':{f:'Есть бесплатный план с лимитами; платные Pro и выше; для студентов доступны льготы',o:'Закрытая модель',p:'VS Code, JetBrains, GitHub, терминал',r:'Чат понимает русский, интерфейс на английском',s:'Подсказки прямо в редакторе, объяснение кода, работа в агентном режиме.',l:'Может предлагать неточный или небезопасный код: результат нужно проверять.',k:'Для программистов всех уровней, особенно студентов.'},
+'Cursor':{f:'Бесплатный план с лимитами, платные тарифы',o:'Закрытое приложение',p:'Windows, macOS, Linux',r:'Чат понимает русский, интерфейс на английском',s:'Понимает весь проект, правит сразу несколько файлов, режим агента.',l:'Быстро расходует лимиты запросов; нужен привычный к IDE пользователь.',k:'Для разработчиков, которые хотят писать код вместе с ИИ.'},
+'Suno':{f:'Бесплатный тариф с лимитами, платные для коммерческого использования',o:'Закрытая модель',p:'Веб, мобильное приложение',r:'Да, поддерживает много языков',s:'Готовая песня с вокалом за минуту, разные жанры.',l:'Спорные вопросы авторских прав; не всегда точно следует тексту.',k:'Для музыкантов-любителей, блогеров и просто для развлечения.'},
+'ElevenLabs':{f:'Небольшой бесплатный лимит, подписки для расширенного',o:'Закрытая модель',p:'Веб, API, iOS, Android',r:'Да, хорошо',s:'Реалистичные голоса, клонирование и дубляж на разные языки.',l:'Клонирование голоса требует осторожности и согласия владельца голоса.',k:'Для озвучки видео, подкастов, аудиокниг и приложений.'},
+'Whisper':{f:'Бесплатно (открытая лицензия), API OpenAI платный',o:'Открытый код и веса',p:'Локально (Python), API OpenAI',r:'Да, хорошо',s:'Точные субтитры и транскрибация на многих языках, работает локально.',l:'Нужна установка и вычислительные ресурсы; нет готового интерфейса.',k:'Для расшифровки лекций, интервью и создания субтитров.'},
+'Qwen':{f:'Чат бесплатный, API платный',o:'Многие модели с открытыми весами',p:'Веб, мобильные приложения, API, локальный запуск',r:'Да',s:'Открытые модели разных размеров, хороший код и математика.',l:'Доступность и интерфейс зависят от региона.',k:'Для разработчиков и тех, кто хочет запускать модели у себя.'},
+'GigaChat':{f:'Есть бесплатный доступ, платные тарифы для расширенного',o:'Закрытая модель',p:'Веб, мобильные приложения, API',r:'Да, основной язык',s:'Сильный русский язык, генерация картинок, интеграции с сервисами Сбера.',l:'Доступность зависит от региона; в других языках слабее.',k:'Для русскоязычных пользователей и компаний.'},
+'Алиса':{f:'Бесплатно в приложениях и на устройствах Яндекса',o:'Закрытая модель',p:'Приложение, браузер, умные колонки, веб',r:'Да, основной язык',s:'Голосовое управление, умный дом, сервисы Яндекса.',l:'Привязана к экосистеме Яндекса; доступность зависит от региона.',k:'Для тех, кто пользуется сервисами и устройствами Яндекса.'},
+'Llama':{f:'Модели бесплатны, запуск требует своих ресурсов',o:'Открытые веса (лицензия Llama)',p:'Локально, облака, Hugging Face',r:'Частично',s:'Большая экосистема, можно дообучать и запускать у себя.',l:'Лицензия имеет ограничения; нужна техническая подготовка.',k:'Для разработчиков, исследователей и энтузиастов.'},
+'Adobe Firefly':{f:'Бесплатные кредиты ограничены, остальное по подписке Adobe',o:'Закрытая модель',p:'Веб, Photoshop, Illustrator, Express',r:'Частично',s:'Встроена в рабочие инструменты дизайнеров, понятные правила использования.',l:'Стиль уступает Midjourney в художественности; кредиты ограничены.',k:'Для дизайнеров и маркетологов.'},
+'Kling AI':{f:'Бесплатные кредиты ограничены, платные подписки',o:'Закрытая модель',p:'Веб, мобильное приложение, API',r:'Лучше писать на английском',s:'Реалистичное движение, оживление фото, длинные сцены.',l:'Очередь и скорость зависят от нагрузки; ограничения по контенту.',k:'Для авторов роликов и экспериментов с видео.'},
+'Ollama':{f:'Бесплатно',o:'Открытое приложение, запускает открытые модели',p:'Windows, macOS, Linux, API на localhost',r:'Зависит от выбранной модели',s:'Приватность, работа без интернета, простая установка.',l:'Нужен компьютер с достаточной памятью, лучше с видеокартой.',k:'Для студентов, разработчиков и всех, кто хочет локальный ИИ.'},
+'Gamma':{f:'Бесплатные кредиты ограничены, платные тарифы',o:'Закрытый сервис',p:'Веб',r:'Да',s:'Быстро собирает презентацию с дизайном из короткого описания.',l:'Шаблонный вид; тонкая настройка слайдов ограничена.',k:'Для студентов и сотрудников, которым нужна презентация быстро.'},
+'Ideogram':{f:'Бесплатный уровень с лимитами, платные подписки',o:'Закрытая модель',p:'Веб, мобильное приложение',r:'Лучше писать на английском',s:'Читаемый текст на картинках, постеры и логотипы.',l:'Лимиты бесплатного уровня; сложные сцены требуют уточнений.',k:'Для дизайнеров, SMM и тех, кому нужны картинки с надписями.'},
+'Luma Dream Machine':{f:'Ограниченные бесплатные кредиты, платные подписки',o:'Закрытая модель',p:'Веб, iOS',r:'Лучше писать на английском',s:'Плавное движение камеры, быстрые клипы из фото.',l:'Короткие ролики; кредиты расходуются быстро.',k:'Для блогеров, дизайнеров и экспериментов с видео.'},
+'Replit':{f:'Бесплатный план с ограничениями, платные подписки',o:'Закрытый сервис',p:'Веб, iOS, Android',r:'Чат понимает русский',s:'Не нужна установка: код, запуск и публикация в браузере.',l:'Ресурсы бесплатного плана ограничены; агент расходует кредиты.',k:'Для новичков, учебных проектов и быстрых прототипов.'},
+'Lovable':{f:'Бесплатный уровень с ограничениями, платные тарифы',o:'Закрытый сервис',p:'Веб',r:'Чат понимает русский',s:'Быстрое создание сайтов и приложений без кода.',l:'Сложную логику приходится дорабатывать; результат нужно проверять.',k:'Для предпринимателей, дизайнеров и создателей прототипов.'},
+'Descript':{f:'Бесплатный уровень с ограничениями, платные тарифы',o:'Закрытый сервис',p:'Windows, macOS, веб',r:'Да, для многих языков',s:'Монтаж по тексту, субтитры, удаление пауз и слов-паразитов.',l:'Для видео нужен мощный компьютер; качество расшифровки зависит от записи.',k:'Для подкастеров, блогеров и преподавателей.'}
+};
+function facts(e){var k=[['Стоимость',e.f],['Открытость',e.o],['Платформы',e.p],['Русский язык',e.r]];return '<div class="facts">'+k.map(function(x){return '<div class="fact"><small>'+x[0]+'</small><b>'+esc(x[1]||'—')+'</b></div>'}).join('')+'</div><p class="note">Тарифы, лимиты и доступность меняются — уточняйте на сайте продукта.</p>'}
+var HUE={'Чат-боты':250,'Изображения':310,'Видео':350,'Код':165,'Аудио и голос':200,'Платформы':270};
+var MO={'Чат-боты':`<rect x='8' y='14' width='58' height='34' rx='10'/><path d='M20 28h34M20 37h22'/><rect x='34' y='52' width='58' height='34' rx='10'/><path d='M46 66h34M46 75h20'/>`,'Изображения':`<rect x='8' y='14' width='84' height='72' rx='10'/><circle cx='30' cy='38' r='8'/><path d='M8 74l24-22 20 18 14-12 26 22'/>`,'Видео':`<rect x='8' y='22' width='84' height='56' rx='12'/><path d='M42 38v24l22-12z'/>`,'Код':`<path d='M34 28L12 50l22 22M66 28l22 22-22 22M56 20L44 80'/>`,'Аудио и голос':`<path d='M14 40v20M28 26v48M42 12v76M56 30v40M70 20v60M84 38v24'/>`,'Платформы':`<circle cx='50' cy='50' r='10'/><circle cx='16' cy='22' r='7'/><circle cx='84' cy='24' r='7'/><circle cx='20' cy='80' r='7'/><circle cx='82' cy='78' r='7'/><path d='M23 27l19 16M77 29L58 43M26 75l16-18M76 73L58 57'/>`};
+var curI=-1,view=[],an=true,AC={};
+function art(d,id){var ck=d.n+id;return AC[ck]||(AC[ck]=art2(d,id))}
+function art2(d,id){var h=0,i;for(i=0;i<d.n.length;i++)h+=d.n.charCodeAt(i)*(i+3);var b=(HUE[d.c]||250)+h%30-15,w=d.n.split(' '),L=w.length>1?w[0][0]+w[1][0]:d.n.slice(0,2);
+return `<svg viewBox='0 0 400 160' preserveAspectRatio='xMidYMid slice' aria-hidden='true' style='transition:transform .4s'><defs><linearGradient id='${id}' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='hsl(${b},78%,58%)'/><stop offset='1' stop-color='hsl(${b+45},80%,34%)'/></linearGradient><radialGradient id='${id}r'><stop offset='0' stop-color='#fff' stop-opacity='.35'/><stop offset='1' stop-color='#fff' stop-opacity='0'/></radialGradient></defs><rect width='400' height='160' fill='url(#${id})'/><circle cx='330' cy='20' r='130' fill='url(#${id}r)'/><circle cx='40' cy='175' r='90' fill='#fff' opacity='.08'/><g transform='translate(244 34) scale(.9)' fill='none' stroke='#fff' stroke-width='4.5' stroke-linecap='round' stroke-linejoin='round' opacity='.92'>${MO[d.c]||''}</g><rect x='28' y='40' width='80' height='80' rx='22' fill='#fff' fill-opacity='.18' stroke='#fff' stroke-opacity='.5'/><text x='68' y='93' text-anchor='middle' font-size='34' font-weight='700' fill='#fff' font-family='system-ui,sans-serif'>${esc(L)}</text></svg>`}
+var fl={free:0,open:0};
+function isFree(d){return /бесплатн/i.test((X[d.n]||{}).f||'')}
+function isOpen(d){return /^(Открыт|Многие модели с открыт|Часть модел)/.test((X[d.n]||{}).o||'')}
+function tags(d){var y=(d.y.match(/\d{4}/)||[''])[0],t='';if(y)t+='<span>📅 '+y+'</span>';if(isFree(d))t+='<span class="g">🆓 Бесплатно</span>';if(isOpen(d))t+='<span class="o">🔓 Open</span>';return '<div class="tags">'+t+'</div>'}
+function stats(){var v=[[D.length,'ИИ-продуктов'],[CATS.length-1,'категорий'],[D.filter(isFree).length,'с бесплатным доступом'],[new Date().getFullYear()-2016,'лет истории в каталоге']],nm=D.map(function(d){return '<span>✦ '+esc(d.n)+'</span>'}).join(''),el=document.getElementById('stats');
+el.innerHTML='<div class="stats-row">'+v.map(function(x){return '<div class="st"><b data-to="'+x[0]+'">0</b><span>'+x[1]+'</span></div>'}).join('')+'</div><div class="marq"><div class="mq">'+nm+nm+'</div></div>';
+el.querySelectorAll('b').forEach(function(b){var to=+b.dataset.to,t0=null;function st(ts){if(t0===null)t0=ts;var p=Math.min((ts-t0)/1200,1);b.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(st)}requestAnimationFrame(st)})}
+var cmpA=null,cmpB=null,cmpInit=false;
+function ru(e){var r=(e&&e.r)||'';return /основной/.test(r)?4:/^Да/.test(r)?3:/Чат понимает/.test(r)?2:1}
+function npl(e){return ((e&&e.p)||'').split(',').length}
+function yr(d){return +((d.y.match(/\d{4}/)||[0])[0])}
+function why(a,b){var A=D[a],B=D[b],ea=X[A.n]||{},eb=X[B.n]||{},r=[],p=0;
+if(isFree(A)&&!isFree(B)){r.push('Можно начать бесплатно — у соперника бесплатный старт в каталоге не отмечен');p++}
+if(isOpen(A)&&!isOpen(B)){r.push('Открытые веса: можно запускать у себя, дорабатывать и не зависеть от сервиса');p++}
+if(ru(ea)>ru(eb)){r.push('Лучше работает с русским языком');p++}
+if(npl(ea)-npl(eb)>=2){r.push('Больше способов использовать: '+npl(ea)+' платформ против '+npl(eb));p++}
+if(yr(A)&&yr(B)&&yr(B)-yr(A)>=2){r.push('Дольше на рынке: с '+yr(A)+' года, у соперника с '+yr(B));p++}
+if(ea.s)r.push('Сильная сторона: '+ea.s);return{r:r,p:p}}
+function pick(id,sel){return '<select id="'+id+'" aria-label="Выбор ИИ"><option value="">— выберите ИИ —</option>'+CATS.slice(1).map(function(c){return '<optgroup label="'+c+'">'+D.map(function(d,i){return d.c===c?'<option value="'+i+'"'+(i===sel?' selected':'')+'>'+esc(d.n)+'</option>':''}).join('')+'</optgroup>'}).join('')+'</select>'}
+function cmpView(){if(!cmpInit&&cmpA===null&&cmpB===null){cmpA=0;cmpB=1}cmpInit=true;
+var h='<div class="cmp"><h2>⚖️ Сравнение 1 на 1</h2><div class="cmp-pick">'+pick('sa',cmpA)+'<button class="chip" data-act="sw" title="Поменять местами">⇄</button>'+pick('sb',cmpB)+'<button class="chip" data-act="rp">🎲 Случайная пара</button></div>';
+if(cmpA===null||cmpB===null)return h+'<p class="note">Выберите два продукта, чтобы увидеть сравнение.</p></div>';
+if(cmpA===cmpB)return h+'<p class="note">Выберите два разных продукта.</p></div>';
+var A=D[cmpA],B=D[cmpB],ea=X[A.n]||{},eb=X[B.n]||{},wa=why(cmpA,cmpB),wb=why(cmpB,cmpA);
+function vc(d,id){return '<div class="vcard"><div class="vart">'+art(d,id)+'</div><b>'+esc(d.n)+'</b><span>'+esc(d.c)+' · '+esc(d.o)+'</span></div>'}
+function ul(w){return '<ul>'+w.r.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>'}
+var v=wa.p===wb.p?'<b>Ничья</b> по формальным критериям каталога ('+wa.p+' : '+wb.p+'). Выбирайте по задаче — подсказки ниже.':'По формальным критериям каталога вперёди <b>'+esc((wa.p>wb.p?A:B).n)+'</b> ('+Math.max(wa.p,wb.p)+' : '+Math.min(wa.p,wb.p)+').';
+if(A.c!==B.c)v+=' Это продукты из разных категорий, поэтому они решают разные задачи.';
+var rows=[['Компания',A.o,B.o,0,0],['Год появления',A.y,B.y,0,0],['Стоимость',ea.f,eb.f,+isFree(A),+isFree(B)],['Открытость',ea.o,eb.o,+isOpen(A),+isOpen(B)],['Платформы',ea.p,eb.p,npl(ea)>=npl(eb)+2?1:0,npl(eb)>=npl(ea)+2?1:0],['Русский язык',ea.r,eb.r,ru(ea),ru(eb)],['Ограничения',ea.l,eb.l,0,0]];
+return h+'<div class="vs">'+vc(A,'ca')+'<div class="vsb">VS</div>'+vc(B,'cb')+'</div><p class="verdict">'+v+'</p>'+
+'<div class="two"><div class="adv"><h3>✅ Почему стоит выбрать '+esc(A.n)+'</h3>'+ul(wa)+'</div><div class="adv"><h3>✅ Почему стоит выбрать '+esc(B.n)+'</h3>'+ul(wb)+'</div></div>'+
+'<div class="tw"><table class="ct"><tr><th>Критерий</th><th>'+esc(A.n)+'</th><th>'+esc(B.n)+'</th></tr>'+rows.map(function(r){return '<tr><th scope="row">'+r[0]+'</th><td class="'+(r[3]>r[4]?'win':'')+'">'+esc(r[1]||'—')+'</td><td class="'+(r[4]>r[3]?'win':'')+'">'+esc(r[2]||'—')+'</td></tr>'}).join('')+'</table></div>'+
+'<div class="two"><div class="adv"><h3>🎯 Кому подходит '+esc(A.n)+'</h3><p>'+esc(ea.k||'—')+'</p><h3>⚠️ Минус</h3><p>'+esc(ea.l||'—')+'</p></div><div class="adv"><h3>🎯 Кому подходит '+esc(B.n)+'</h3><p>'+esc(eb.k||'—')+'</p><h3>⚠️ Минус</h3><p>'+esc(eb.l||'—')+'</p></div></div>'+
+'<p class="note">Сравнение строится на данных каталога и носит общий характер: тарифы и качество моделей меняются — проверяйте на сайтах продуктов.</p></div>'}
+var MD='auto',lastPC=null;try{MD=localStorage.getItem('aicat-mode')||'auto'}catch(x){}
+function isPC(){return MD==='pc'||(MD==='auto'&&innerWidth>=1024)}
+function applyMode(){var pc=isPC(),r=document.documentElement,vp=document.querySelector('meta[name=viewport]'),b=document.getElementById('mode');lastPC=pc;r.classList.toggle('pc',pc);r.classList.toggle('phone',!pc&&MD==='mob'&&innerWidth>=700);if(vp)vp.setAttribute('content',MD==='pc'&&screen.width<1024?'width=1280':'width=device-width, initial-scale=1, viewport-fit=cover');b.innerHTML=pc?'📱<span class="lbl"> Версия для телефона</span>':'🖥️<span class="lbl"> Версия для ПК</span>';b.title=pc?'Переключить на версию для телефона':'Переключить на версию для ПК'}
+function sec(h,t){return '<section class="sec"><h3>'+h+'</h3><p>'+esc(t)+'</p></section>'}
+function detail(i){var d=D[i],ex=X[d.n]||{},rel=D.map(function(x,j){return x.c===d.c&&j!==i?'<a href="#p-'+j+'">'+esc(x.n)+'</a>':''}).join('');
+return '<a class="back" href="#home">← Назад к каталогу</a><div class="hero">'+art(d,'h')+'</div><div class="dh"><h1>'+esc(d.n)+'</h1><span class="badge">'+esc(d.c)+'</span></div><div class="meta"><b>Компания</b><span>'+esc(d.o)+'</span><b>Год</b><span>'+esc(d.y)+'</span><b>Авторы</b><span>'+esc(d.a)+'</span></div>'+facts(ex)+sec('О продукте',d.t)+sec('Для чего нужен',d.p)+sec('Почему создан',d.w)+sec('Создатели',d.m)+sec('Сильные стороны',ex.s||'—')+sec('Ограничения',ex.l||'—')+sec('Кому подходит',ex.k||'—')+(rel?'<h3>Другие в этой категории</h3><div class="rel">'+rel+'</div>':'')+'<a class="go" href="'+d.u+'" target="_blank" rel="noopener noreferrer">Открыть сайт ↗</a><a class="go alt" href="#cmp-'+i+'">⚖️ Сравнить с другим ИИ</a>'}
+function route(){var cm=/^#cmp-(\d+)$/.exec(location.hash);if(cm&&+cm[1]<D.length){cmpA=+cm[1];cmpB=null;cmpInit=true;cat='cmp';drawTabs();render();try{history.replaceState(null,'','#home')}catch(x){}}var m=/^#p-(\d+)$/.exec(location.hash),i=m&&+m[1],ok=m&&i<D.length,dt=document.getElementById('detail');if(ok)dt.innerHTML=detail(i);curI=ok?i:-1;var dk=isPC(),hide=ok&&!dk;dt.hidden=!ok;document.body.classList.toggle('pd',ok&&dk);document.getElementById('list').hidden=hide;document.querySelector('.bar').hidden=hide;document.getElementById('stats').hidden=hide;grid.querySelectorAll('.card').forEach(function(c){c.classList.toggle('sel',ok&&+c.dataset.i===i)});if(ok&&dk){dt.scrollTop=0;var sc=grid.querySelector('.card.sel');if(sc)sc.scrollIntoView({block:'nearest'})}else window.scrollTo(0,0)}
+addEventListener('hashchange',route);
+grid.addEventListener('click',function(e){if(e.target.closest('a'))return;var c=e.target.closest('.card');if(c)location.hash='p-'+c.dataset.i});
+grid.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.classList.contains('card'))location.hash='p-'+e.target.dataset.i});
+applyMode();drawTabs();render();stats();route();
+document.getElementById('mode').addEventListener('click',function(){MD=isPC()?'mob':'pc';try{localStorage.setItem('aicat-mode',MD)}catch(x){}applyMode();route()});
+var rt;addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){if(MD==='auto'&&isPC()!==lastPC){applyMode();route()}},150)});
+document.addEventListener('keydown',function(e){if(e.ctrlKey||e.metaKey||e.altKey)return;var t=e.target,k=e.key,ty=/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName);
+if(k==='Escape'){if(ty){t.blur();return}if(curI>-1)location.hash='home';return}
+if(ty)return;
+if(k==='/'||k==='.'){e.preventDefault();if(!q.hidden)q.focus();return}
+if(/^[1-8]$/.test(k)){cat=CATS.concat(['cmp'])[+k-1];an=true;drawTabs();render();return}
+if(k==='r'||k==='к'){location.hash='p-'+Math.floor(Math.random()*D.length);return}
+if(k==='t'||k==='е'){document.getElementById('theme').click();return}
+if(k==='c'||k==='с'){if(curI>-1)location.hash='cmp-'+curI;else{cat='cmp';drawTabs();render()}return}
+if(curI>-1&&/^Arrow(Left|Right|Up|Down)$/.test(k)){e.preventDefault();var L=view.indexOf(curI)>-1?view:D.map(function(d,i){return i}),p=L.indexOf(curI),n=(k==='ArrowRight'||k==='ArrowDown')?p+1:p-1;location.hash='p-'+L[(n+L.length)%L.length]}});
+grid.addEventListener('change',function(e){var t=e.target;if(t.id==='sa'||t.id==='sb'){var v=t.value===''?null:+t.value;if(t.id==='sa')cmpA=v;else cmpB=v;render()}});
+grid.addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b)return;if(b.dataset.act==='sw'){var t=cmpA;cmpA=cmpB;cmpB=t}else{var pool=D.map(function(d,i){return i}).filter(function(i){return cmpA===null?true:i!==cmpA&&D[i].c===D[cmpA].c});if(cmpA===null)cmpA=Math.floor(Math.random()*D.length);pool=pool.filter(function(i){return i!==cmpA});cmpB=pool[Math.floor(Math.random()*pool.length)]}render()});
+document.getElementById('rnd').addEventListener('click',function(){location.hash='p-'+Math.floor(Math.random()*D.length)});
+document.querySelector('.chips').addEventListener('click',function(e){var b=e.target.closest('.chip[data-f]');if(!b)return;fl[b.dataset.f]=!fl[b.dataset.f];b.classList.toggle('on');render()});
+</script>
+</body>
+</html>
